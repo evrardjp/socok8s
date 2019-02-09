@@ -20,3 +20,8 @@ deploy_on_openstack_repos_to_configure:
   SES5-product: http://provo-clouddata.cloud.suse.de/repos/x86_64/SUSE-Enterprise-Storage-5-Pool/
   SES5-update: http://provo-clouddata.cloud.suse.de/repos/x86_64/SUSE-Enterprise-Storage-5-Updates/
   SLE12Containers: http://download.suse.de/ibs/SUSE/Updates/SLE-Module-Containers/12/x86_64/update/
+deploy_on_openstack_caasp_image: "caasp-3.0.0-GM-OpenStack-qcow"
+deploy_on_openstack_caasp_workers: 3
+deploy_on_openstack_caasp_securitygroup: "{{ deploy_on_openstack_sesnode_securitygroup }}"
+deploy_on_openstack_caasp_stacknamefile: "{{ socok8s_workspace }}/stackname"
+deploy_on_openstack_caasp_environmentfile: "{{ socok8s_workspace }}/environment.json"
