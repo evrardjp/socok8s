@@ -12,7 +12,6 @@
 
     - name: Handle creation
       when:
-        - (ses_node_create | default('true')) | bool
         - not ((ses_node_delete | default('false'))| bool)
       block:
         - name: Create volume
@@ -72,7 +71,6 @@
 
     - name: Handle deletion
       when:
-        - not ((ses_node_create | default('true')) | bool)
         - (ses_node_delete | default('false')) | bool
       block:
         - name: Delete server
