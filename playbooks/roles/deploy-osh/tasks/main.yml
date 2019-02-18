@@ -97,9 +97,13 @@
   make:
     chdir: /opt/openstack-helm-infra
     target: all
-  when:
-    - not developer_mode
-    - _gitclone is changed
+  tags:
+    - install
+
+- name: Build openstack charts
+  make:
+    chdir: /opt/openstack-helm
+    target: all
   tags:
     - install
 
@@ -131,16 +135,33 @@
     - run
 
 
-# TODO(evrardjp): Use mechanism like glance to re-use component-install.yml code and allow any override.
-# TODO(evrardjp): Check stdout to ensure idempotency. In the meantime skip_ansible_lint
-- name: Setup openstack CLIs
-  command: ./tools/deployment/multinode/010-setup-client.sh
-  args:
-    executable: /bin/bash
-    chdir: /opt/openstack-helm
-  tags:
-    - run
-    - skip_ansible_lint
+- name: Setup openstack clis
+  pip:
+    name:
+      - cmd2<=0.8.7
+      - python-openstackclient
+      - python-heatclient
+
+- name: Ensure openstack conf folder exists
+  file:
+    state: directory
+    path: /etc/openstack
+
+- name: Configure clouds.yaml
+  copy:
+    content: |
+      clouds:
+        openstack_helm:
+          region_name: RegionOne
+          identity_api_version: 3
+          auth:
+            username: 'admin'
+            password: 'password'
+            project_name: 'admin'
+            project_domain_name: 'default'
+            user_domain_name: 'default'
+            auth_url: 'http://keystone.openstack.svc.cluster.local/v3'
+    dest: /etc/openstack/clouds.yaml
 
 # TODO(evrardjp): Follow on https://review.openstack.org/#/c/605005/
 - name: Use a different ingress script as long as upstream does not support overrides
