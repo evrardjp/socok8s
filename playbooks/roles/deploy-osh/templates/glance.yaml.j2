@@ -9,4 +9,23 @@ conf:
     glance_store:
       rbd_store_user: {{ ses_cluster_configuration['glance']['rbd_store_user'] }}
       rbd_store_pool: {{ ses_cluster_configuration['glance']['rbd_store_pool'] }}
-{{ lookup('template','files/common-images-overrides.yml') | from_yaml | to_nice_yaml(indent=2) }}
+images:
+  tags:
+    test: docker.io/xrally/xrally-openstack:1.3.0
+    # TODO
+    glance_storage_init: docker.io/port/ceph-config-helper:v1.10.3
+    # TODO in heat patch
+    db_init: docker.io/openstackhelm/heat:ocata
+    {% if developer_mode %}glance_db_sync: "{{ suse_osh_registry_location }}/openstackhelm/glance:rocky-opensuse_15"{% endif %}
+    # TODO in heat patch
+    db_drop: docker.io/openstackhelm/heat:ocata
+    ks_user: docker.io/openstackhelm/heat:ocata
+    ks_service: docker.io/openstackhelm/heat:ocata
+    ks_endpoints: docker.io/openstackhelm/heat:ocata
+    rabbit_init: docker.io/rabbitmq:3.7-management
+    {% if developer_mode %}glance_api: "{{ suse_osh_registry_location }}/openstackhelm/glance:rocky-opensuse_15"{% endif %}
+    {% if developer_mode %}glance_registry: "{{ suse_osh_registry_location }}/openstackhelm/glance:rocky-opensuse_15"{% endif %}
+    bootstrap: docker.io/openstackhelm/heat:ocata
+    dep_check: quay.io/stackanetes/kubernetes-entrypoint:v0.3.1
+    image_repo_sync: docker.io/docker:17.07.0
+  pull_policy: {% if developer_mode %}"Always"{% else %}"IfNotPresent"{% endif %}

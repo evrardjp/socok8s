@@ -24,6 +24,12 @@
   tags:
     - always
 
+- name: Developer images location
+  set_fact:
+    suse_osh_registry_location: "{{ ansible_fqdn }}:5000/"
+  when:
+    - "developer_mode | bool"
+
 - name: Decode the secrets
   set_fact:
     ceph_admin_keyring_key: "{{ ceph_admin_keyring_b64key | b64decode }}"
